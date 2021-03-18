@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="d-flex flex-row justify-content-center align-items-center " style="min-height: 90vh;">
+        <div class="col-md-6">
+            <div class="bg-white shadow p-5">
+                <h5 class="font-large-fixed">Amount : <span class=" font-large-fixed font-weight-bold color-primary">GH {{ payment.amount }}</span></h5>
+                <hr>
+                <form>
+                    <script src="https://js.paystack.co/v1/inline.js"></script>
+                    <button class="btn btn-large btn-success waves-effect waves-light" id="django-paystack-button" type="button" onclick="payWithPaystack()"> Pay </button>
+                    <a href="{{ payment.get_delete_url }}" id="delete-payment" class="btn btn-danger">Delete</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("delete-payment").addEventListener('click', (e) => {
+        if (!confirm("Are you sure you want to delete this payment!")) {
+            e.preventDefault();
+        }
+    });
+</script>
+<script>
+    function payWithPaystack() {
+        let currency = "GHS"
+        let plan = ""
+        let ref = "{{ payment.ref }}"
+        let obj = {
+            key: '{{ paystack_public_key }}',
+            email: '{{ payment.email }}',
+            amount: {{ payment.amount_value }},
+            ref:ref,    
+            callback: function (response) {
+                window.location.href = "{% url 'verify-payment' payment.ref %}?amount={{ payment.amount_value }}&trxref=" + response.trxref
+            }
+        }      
+        
+        if(Boolean(currency)){
+            obj.currency = currency.toUpperCase()
+        }
+        if(Boolean(plan)){
+            obj.plan = plan
+        }
+        var handler = PaystackPop.setup(obj);
+        handler.openIframe();
+        console.log({currency,plan,ref})
+    }
+</script>
+
+{% endblock %}

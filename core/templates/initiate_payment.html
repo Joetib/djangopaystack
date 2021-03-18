@@ -1,0 +1,22 @@
+
+{% extends "base.html" %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row d-flex flex-row justify-content-center  py-md-5 py-3 " style="min-height: 90vh;">
+        <div class="col-md-12">
+            <form class="bg-white shadow p-5 form" action="." method="POST">
+                <h4 class="text-uppercase">Enter amount in Ghana Cedis</h4>
+                <hr>
+                {% csrf_token %}
+                {{ payment_form | crispy }}
+                <p>
+                    <input type="submit" class="btn btn-success" value="Proceed to Payment">
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
